@@ -18,8 +18,7 @@ class TestPlayerDirPageParser(unittest.TestCase):
     def test_parser(self):
         with urlopen(urljoin(BASE_URL, PLAYER_URL)) as resp:
             page = resp.read().decode('utf-8')
-        parser = player_dir_page_parser.PlayersDirPageParser()
-        parser.feed(str(page))
+        parser = player_dir_page_parser.PlayersDirPageParser(str(page))
 
         urls = {
             'a': 'https://www.basketball-reference.com/players/a/',

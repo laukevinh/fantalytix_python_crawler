@@ -1,75 +1,43 @@
 """This parser processes the basketball-reference player directory
-page. It can return a list of urls that each contain the players 
-whose last name start with the same letter. It also returns the 
-list of letters.
+page. It returns a dict of `{'<letter>': '<url>'}`, where each url 
+contains the players whose last name start with the same letter.
+
+Key data are located under `ul.page_index > li > a`.
+
+BeautifulSoup plus Python's html.parser are used for html parsing. 
+BeautifulSoup plus lxml was tested as well but produces unexpected 
+results. For example, the `ul.page_index > li > a` select statement 
+produces only 1 element when 25 are expected.
 
 Not all letters are used. Specifically no player has a last name 
 that starts with 'X'.
-
-The DOM structure has <a> tags that point to the "players whose
-last name starts with <letter>" page. It also has <a> tags that
-point to a handful of popular players within the same section.
-
-The former reside in `li a` tags while the latter reside in
-`li div a` tags.
 """
 
-from html.parser import HTMLParser
+from bs4 import BeautifulSoup
 
 from crawler.sports_reference.basketball.settings import BASE_URL
 
 from urllib.parse import urljoin
 
-class PlayersDirPageParser(HTMLParser):
+import re
 
-    def __init__(self):
-        super().__init__()
+class PlayersDirPageParser:
+
+    LAST_NAME_LETTER_TAG = 'ul.page_index > li > a'
+    RE_PLAYER_URL = re.compile(r'/players/[a-z]/')
+
+    def __init__(self, html, parser='html.parser'):
         self.urls = dict()
-        self.keys = []
-        self.vals = []
-        self.in_recording_zone = False
-        self.begin_recording = False
-        self.recording = False
+        self.html = html
+        self.parser = parser
 
-    def handle_starttag(self, tag, attrs):
-        if tag == 'ul' and ('class', 'page_index') in attrs:
-            self.in_recording_zone = True
-            self.begin_recording = True
-            return
-        if self.in_recording_zone:
-            if tag == 'div':
-                self.begin_recording = False
-                return
-            if tag == 'a' and self.begin_recording:
-                self.recording = True
-                for name, value in attrs:
-                    if name == 'href':
-                        self.vals.append(value)
-                return
-
-    def handle_endtag(self, tag):
-        if self.in_recording_zone:
-            if tag == 'ul':
-                self.in_recording_zone = False
-                self.begin_recording = False
-                return
-            if tag == 'div':
-                self.begin_recording = True
-                return
-            if tag == 'a':
-                self.recording = False
-                return
-
-    def handle_data(self, data):
-        if self.recording:
-            self.keys.append(data)
-            return
+    def handle_data(self):
+        handler = BeautifulSoup(self.html, self.parser)
+        last_name_letter_links = handler.select(self.LAST_NAME_LETTER_TAG)
+        for link in last_name_letter_links:
+            self.urls[link.text.lower()] = urljoin(BASE_URL, link.get('href'))
     
-    def update_urls(self):
-        for key, val in zip(self.keys, self.vals):
-            self.urls[key.lower()] = urljoin(BASE_URL, val)
-
     def get_urls(self):
         if len(self.urls) == 0:
-            self.update_urls()
+            self.handle_data()
         return self.urls
