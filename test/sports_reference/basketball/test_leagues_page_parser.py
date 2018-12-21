@@ -1,4 +1,7 @@
 import unittest
+
+from datetime import date
+
 from urllib.request import urlopen
 
 from urllib.parse import urljoin
@@ -15,23 +18,49 @@ class TestLeaguesPageParser(unittest.TestCase):
             'https://www.basketball-reference.com/leagues'
         )
 
+    def test_seasons_years_text_to_date(self):
+        parser = leagues_page_parser.LeaguesPageParser("")
+        self.assertEqual(parser.season_years_text_to_date('2015-16'),
+            (date(2015, 1, 1), date(2016, 1, 1)))
+        self.assertEqual(parser.season_years_text_to_date('1999-00'),
+            (date(1999, 1, 1), date(2000, 1, 1)))
+
     def test_parser(self):
         with urlopen(urljoin(BASE_URL, LEAGUES_URL)) as resp:
             page = resp.read().decode('utf-8')
         parser = leagues_page_parser.LeaguesPageParser(page)
 
-        urls = {
-            ('1975-76', 'ABA'): 'https://www.basketball-reference.com/leagues/ABA_1976.html',
-            ('2014-15', 'NBA'): 'https://www.basketball-reference.com/leagues/NBA_2015.html',
-            ('2015-16', 'NBA'): 'https://www.basketball-reference.com/leagues/NBA_2016.html',
-            ('2016-17', 'NBA'): 'https://www.basketball-reference.com/leagues/NBA_2017.html',
-            ('2017-18', 'NBA'): 'https://www.basketball-reference.com/leagues/NBA_2018.html',
-        }
+        seasons = [
+            {
+                'league': 'ABA',
+                'start_year': date(1975, 1, 1),
+                'end_year': date(1976, 1, 1),
+                'url': 'https://www.basketball-reference.com/leagues/ABA_1976.html'
+            },
+            {
+                'league': 'NBA',
+                'start_year': date(2014, 1, 1),
+                'end_year': date(2015, 1, 1),
+                'url': 'https://www.basketball-reference.com/leagues/NBA_2015.html'
+            },
+            {
+                'league': 'NBA',
+                'start_year': date(2015, 1, 1),
+                'end_year': date(2016, 1, 1),
+                'url': 'https://www.basketball-reference.com/leagues/NBA_2016.html'
+            },
+            {
+                'league': 'NBA',
+                'start_year': date(2016, 1, 1),
+                'end_year': date(2017, 1, 1),
+                'url': 'https://www.basketball-reference.com/leagues/NBA_2017.html'
+            }
+        ]
 
-        for key in urls.keys():
-            self.assertEqual(urls[key], parser.get_urls()[key])
+        for season in seasons:
+            self.assertTrue(season in parser.get_data())
 
-        self.assertEqual(len(parser.get_urls()), 82)
+        self.assertEqual(len(parser.get_data()), 82)
 
 if __name__ == "__main__":
     unittest.main()
