@@ -6,9 +6,10 @@ from urllib.request import urlopen
 
 from urllib.parse import urljoin
 
-from crawler.sports_reference.basketball import leagues_page_parser
-from crawler.sports_reference.basketball.settings import (
-    BASE_URL, LEAGUES_URL)
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .leagues_page_parser import LeaguesPageParser
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .settings import (BASE_URL, LEAGUES_URL)
 
 class TestLeaguesPageParser(unittest.TestCase):
 
@@ -19,7 +20,7 @@ class TestLeaguesPageParser(unittest.TestCase):
         )
 
     def test_seasons_years_text_to_date(self):
-        parser = leagues_page_parser.LeaguesPageParser("")
+        parser = LeaguesPageParser("")
         self.assertEqual(parser.season_years_text_to_date('2015-16'),
             (date(2015, 1, 1), date(2016, 1, 1)))
         self.assertEqual(parser.season_years_text_to_date('1999-00'),
@@ -28,7 +29,7 @@ class TestLeaguesPageParser(unittest.TestCase):
     def test_parser(self):
         with urlopen(urljoin(BASE_URL, LEAGUES_URL)) as resp:
             page = resp.read().decode('utf-8')
-        parser = leagues_page_parser.LeaguesPageParser(page)
+        parser = LeaguesPageParser(page)
 
         seasons = [
             {
