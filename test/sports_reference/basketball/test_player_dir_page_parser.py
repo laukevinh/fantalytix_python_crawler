@@ -3,9 +3,11 @@ from urllib.request import urlopen
 
 from urllib.parse import urljoin
 
-from crawler.sports_reference.basketball import player_dir_page_parser
-from crawler.sports_reference.basketball.settings import (
-    BASE_URL, PLAYER_URL)
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .player_dir_page_parser import PlayersDirPageParser
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .settings import (BASE_URL, PLAYER_URL)
+
 
 class TestPlayerDirPageParser(unittest.TestCase):
 
@@ -18,7 +20,7 @@ class TestPlayerDirPageParser(unittest.TestCase):
     def test_parser(self):
         with urlopen(urljoin(BASE_URL, PLAYER_URL)) as resp:
             page = resp.read().decode('utf-8')
-        parser = player_dir_page_parser.PlayersDirPageParser(str(page))
+        parser = PlayersDirPageParser(str(page))
 
         urls = {
             'a': 'https://www.basketball-reference.com/players/a/',

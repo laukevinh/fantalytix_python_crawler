@@ -3,9 +3,11 @@ from urllib.request import urlopen
 
 from urllib.parse import urljoin
 
-from crawler.sports_reference.basketball import teams_page_parser
-from crawler.sports_reference.basketball.settings import (
-    BASE_URL, TEAMS_URL)
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .teams_page_parser import TeamsPageParser
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .settings import (BASE_URL, TEAMS_URL)
+
 
 class TestTeamsPageParser(unittest.TestCase):
 
@@ -18,7 +20,7 @@ class TestTeamsPageParser(unittest.TestCase):
     def test_parser(self):
         with urlopen(urljoin(BASE_URL, TEAMS_URL)) as resp:
             page = resp.read().decode('utf-8')
-        parser = teams_page_parser.TeamsPageParser(page)
+        parser = TeamsPageParser(page)
 
         teams = [
             {

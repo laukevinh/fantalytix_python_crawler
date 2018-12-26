@@ -23,7 +23,8 @@ the source html.
 
 from bs4 import BeautifulSoup
 
-from crawler.sports_reference.basketball.settings import BASE_URL
+from fantalytix_python_crawler.crawler.sports_reference.basketball\
+    .settings import BASE_URL
 
 from urllib.parse import urljoin
 
