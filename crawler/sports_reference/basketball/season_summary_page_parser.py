@@ -13,41 +13,31 @@ from bs4 import BeautifulSoup
 from fantalytix_python_crawler.crawler.sports_reference.basketball\
     .settings import BASE_URL
 
+from .base_page_parser import BasePageParser
+
 from urllib.parse import urljoin
 
 import re
 
 from datetime import datetime, date, time
 
-class SeasonSummaryPageParser:
+class SeasonSummaryPageParser(BasePageParser):
 
     EAST_CONF_TABLE_ROWS = "#all_confs_standings_E table tbody tr"
     WEST_CONF_TABLE_ROWS = "#all_confs_standings_W table tbody tr"
 
     TEAM_NAME_URL_FIELD = "th[data-stat=team_name] a"
 
-    RE_TEAM_SEASON_URL = re.compile(r'/teams/([A-Z]{3})/(\d{4}).html')
-
     def __init__(self, html, parser='html.parser'):
         self.data = []
         self.html = html
         self.parser = parser
 
-    def get_abbreviation_and_year(self, rel_href):
-        try:
-            abbreviation, end_year = self.RE_TEAM_SEASON_URL.match(
-                rel_href).groups()
-        except AttributeError:
-            print("Regex error: Abbreviation or year not found. Is "
-                  "rel_href '{}' in the correct format?".format(rel_href))
-            abbreviation, end_year = "", ""
-        return {'abbreviation': abbreviation, 'end_year': end_year}
-
     def process_table_rows(self, team_rows):
         for row in team_rows:
             team_name_field = row.select(self.TEAM_NAME_URL_FIELD)[0]
             rel_href = team_name_field.get('href')
-            data = self.get_abbreviation_and_year(rel_href)
+            data = self.get_abbreviation_and_year_from_url(rel_href)
 
             self.data.append({
                 'team_name': team_name_field.text.lower(),
