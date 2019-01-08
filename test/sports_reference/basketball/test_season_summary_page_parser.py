@@ -50,15 +50,21 @@ class TestSeasonSummaryPageParser(unittest.TestCase):
 
         self.assertEqual(len(parser.get_data()), 30)
 
-    def test_get_abbreviation_and_year(self):
+    def test_get_abbreviation_and_year_from_url(self):
         parser = SeasonSummaryPageParser("")
 
-        self.assertEqual({'abbreviation': 'PHO', 'end_year': '2019'},
-            parser.get_abbreviation_and_year('/teams/PHO/2019.html'))
-        self.assertEqual({'abbreviation': '', 'end_year': ''},
-            parser.get_abbreviation_and_year('/teams/PHO/201920.html'))
-        self.assertEqual({'abbreviation': '', 'end_year': ''},
-            parser.get_abbreviation_and_year('/teams/BADABBR/2019.html'))
+        self.assertEqual(
+            {'abbreviation': 'PHO', 'end_year': '2019'},
+            parser.get_abbreviation_and_year_from_url(
+                '/teams/PHO/2019.html'))
+        self.assertEqual(
+            {'abbreviation': '', 'end_year': ''},
+            parser.get_abbreviation_and_year_from_url(
+                '/teams/PHO/201920.html'))
+        self.assertEqual(
+            {'abbreviation': '', 'end_year': ''},
+            parser.get_abbreviation_and_year_from_url(
+                '/teams/BADABBR/2019.html'))
 
 if __name__ == "__main__":
     unittest.main()
