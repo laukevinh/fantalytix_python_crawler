@@ -36,6 +36,7 @@ class TestBoxscorePageParser(unittest.TestCase):
             parser.get_data()['home_team']['basic'][0], 
             {
                 'player': 'Kevin Durant',
+                'is_starter': True,
                 'mp': '40:09',
                 'fg': '10',
                 'fga': '17',
@@ -85,6 +86,7 @@ class TestBoxscorePageParser(unittest.TestCase):
             parser.get_data()['away_team']['basic'][1], 
             {
                 'player': 'Anthony Davis',
+                'is_starter': True,
                 'mp': '41:17',
                 'fg': '6',
                 'fga': '16',
@@ -150,6 +152,7 @@ class TestBoxscorePageParser(unittest.TestCase):
             parser.get_data()['away_team']['basic'][5], 
             {
                 'player': 'Julius Randle',
+                'is_starter': False,
                 'mp': '22:52',
                 'fg': '3',
                 'fga': '6',
@@ -172,6 +175,9 @@ class TestBoxscorePageParser(unittest.TestCase):
                 'plus_minus': '-23',
             }
         )
+
+        self.assertEqual(len(parser.get_data()['home_team']['basic']), 12)
+        self.assertEqual(len(parser.get_data()['away_team']['basic']), 13)
 
 if __name__ == "__main__":
     unittest.main()
