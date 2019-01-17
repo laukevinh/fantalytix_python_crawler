@@ -92,67 +92,74 @@ class BoxscorePageParser(BasePageParser):
     def process_basic_box_table(self, handler, abbreviation, data):
         table = handler.select(self.TABLE_BASIC_BOX_SCORE.format(
             abbreviation=abbreviation))[0]
+        is_starter = True
         for row in table.tbody.find_all('tr'):
-            if row.get('class') is None:
-                if len(row.select(self.DID_NOT_PLAY_FIELD)) == 0:
-                    data.append({
-                        'player': row.select(self.PLAYER_FIELD)[0].text,
-                        'mp': row.select(self.MP_FIELD)[0].text,
-                        'fg': row.select(self.FG_FIELD)[0].text,
-                        'fga': row.select(self.FGA_FIELD)[0].text,
-                        'fg_pct': row.select(self.FG_PCT_FIELD)[0].text,
-                        'fg3': row.select(self.FG3_FIELD)[0].text,
-                        'fg3a': row.select(self.FG3A_FIELD)[0].text,
-                        'fg3_pct': row.select(self.FG3_PCT_FIELD)[0].text,
-                        'ft': row.select(self.FT_FIELD)[0].text,
-                        'fta': row.select(self.FTA_FIELD)[0].text,
-                        'ft_pct': row.select(self.FT_PCT_FIELD)[0].text,
-                        'orb': row.select(self.ORB_FIELD)[0].text,
-                        'drb': row.select(self.DRB_FIELD)[0].text,
-                        'trb': row.select(self.TRB_FIELD)[0].text,
-                        'ast': row.select(self.AST_FIELD)[0].text,
-                        'stl': row.select(self.STL_FIELD)[0].text,
-                        'blk': row.select(self.BLK_FIELD)[0].text,
-                        'tov': row.select(self.TOV_FIELD)[0].text,
-                        'pf': row.select(self.PF_FIELD)[0].text,
-                        'pts': row.select(self.PTS_FIELD)[0].text,
-                        'plus_minus': row.select(self.PLUS_MINUS_FIELD)[0].text,
-                    })
-                else:
-                    data.append({
-                        'player': row.select(self.PLAYER_FIELD)[0].text,
-                        'did_not_play': row.select(self.DID_NOT_PLAY_FIELD)[0].text
-                    })
+            if row.get('class') is not None and 'thead' in row.get('class'):
+                is_starter = False
+                continue
+            if len(row.select(self.DID_NOT_PLAY_FIELD)) == 0:
+                data.append({
+                    'player': row.select(self.PLAYER_FIELD)[0].text,
+                    'is_starter': is_starter,
+                    'mp': row.select(self.MP_FIELD)[0].text,
+                    'fg': row.select(self.FG_FIELD)[0].text,
+                    'fga': row.select(self.FGA_FIELD)[0].text,
+                    'fg_pct': row.select(self.FG_PCT_FIELD)[0].text,
+                    'fg3': row.select(self.FG3_FIELD)[0].text,
+                    'fg3a': row.select(self.FG3A_FIELD)[0].text,
+                    'fg3_pct': row.select(self.FG3_PCT_FIELD)[0].text,
+                    'ft': row.select(self.FT_FIELD)[0].text,
+                    'fta': row.select(self.FTA_FIELD)[0].text,
+                    'ft_pct': row.select(self.FT_PCT_FIELD)[0].text,
+                    'orb': row.select(self.ORB_FIELD)[0].text,
+                    'drb': row.select(self.DRB_FIELD)[0].text,
+                    'trb': row.select(self.TRB_FIELD)[0].text,
+                    'ast': row.select(self.AST_FIELD)[0].text,
+                    'stl': row.select(self.STL_FIELD)[0].text,
+                    'blk': row.select(self.BLK_FIELD)[0].text,
+                    'tov': row.select(self.TOV_FIELD)[0].text,
+                    'pf': row.select(self.PF_FIELD)[0].text,
+                    'pts': row.select(self.PTS_FIELD)[0].text,
+                    'plus_minus': row.select(self.PLUS_MINUS_FIELD)[0].text,
+                })
+            else:
+                data.append({
+                    'player': row.select(self.PLAYER_FIELD)[0].text,
+                    'did_not_play': row.select(self.DID_NOT_PLAY_FIELD)[0].text
+                })
 
     def process_advanced_box_table(self, handler, abbreviation, data):
         table = handler.select(self.TABLE_ADVANCED_BOX_SCORE.format(
             abbreviation=abbreviation))[0]
         for row in table.tbody.find_all('tr'):
-            if row.get('class') is None:
-                if len(row.select(self.DID_NOT_PLAY_FIELD)) == 0:
-                    data.append({
-                        'player': row.select(self.PLAYER_FIELD)[0].text,
-                        'mp': row.select(self.MP_FIELD)[0].text,
-                        'ts_pct': row.select(self.TS_PCT_FIELD)[0].text,
-                        'efg_pct': row.select(self.EFG_PCT_FIELD)[0].text,
-                        'fg3a_per_fga_pct': row.select(self.FG3A_PER_FGA_PCT_FIELD)[0].text,
-                        'fta_per_fga_pct': row.select(self.FTA_PER_FGA_PCT_FIELD)[0].text,
-                        'orb_pct': row.select(self.ORB_PCT_FIELD)[0].text,
-                        'drb_pct': row.select(self.DRB_PCT_FIELD)[0].text,
-                        'trb_pct': row.select(self.TRB_PCT_FIELD)[0].text,
-                        'ast_pct': row.select(self.AST_PCT_FIELD)[0].text,
-                        'stl_pct': row.select(self.STL_PCT_FIELD)[0].text,
-                        'blk_pct': row.select(self.BLK_PCT_FIELD)[0].text,
-                        'tov_pct': row.select(self.TOV_PCT_FIELD)[0].text,
-                        'usg_pct': row.select(self.USG_PCT_FIELD)[0].text,
-                        'off_rtg': row.select(self.OFF_RTG_FIELD)[0].text,
-                        'def_rtg': row.select(self.DEF_RTG_FIELD)[0].text
-                    })
-                else:
-                    data.append({
-                        'player': row.select(self.PLAYER_FIELD)[0].text,
-                        'did_not_play': row.select(self.DID_NOT_PLAY_FIELD)[0].text
-                    })
+            if row.get('class') is not None and 'thead' in row.get('class'):
+                continue
+            if len(row.select(self.DID_NOT_PLAY_FIELD)) == 0:
+                data.append({
+                    'player': row.select(self.PLAYER_FIELD)[0].text,
+                    'mp': row.select(self.MP_FIELD)[0].text,
+                    'ts_pct': row.select(self.TS_PCT_FIELD)[0].text,
+                    'efg_pct': row.select(self.EFG_PCT_FIELD)[0].text,
+                    'fg3a_per_fga_pct': row.select(
+                        self.FG3A_PER_FGA_PCT_FIELD)[0].text,
+                    'fta_per_fga_pct': row.select(
+                        self.FTA_PER_FGA_PCT_FIELD)[0].text,
+                    'orb_pct': row.select(self.ORB_PCT_FIELD)[0].text,
+                    'drb_pct': row.select(self.DRB_PCT_FIELD)[0].text,
+                    'trb_pct': row.select(self.TRB_PCT_FIELD)[0].text,
+                    'ast_pct': row.select(self.AST_PCT_FIELD)[0].text,
+                    'stl_pct': row.select(self.STL_PCT_FIELD)[0].text,
+                    'blk_pct': row.select(self.BLK_PCT_FIELD)[0].text,
+                    'tov_pct': row.select(self.TOV_PCT_FIELD)[0].text,
+                    'usg_pct': row.select(self.USG_PCT_FIELD)[0].text,
+                    'off_rtg': row.select(self.OFF_RTG_FIELD)[0].text,
+                    'def_rtg': row.select(self.DEF_RTG_FIELD)[0].text
+                })
+            else:
+                data.append({
+                    'player': row.select(self.PLAYER_FIELD)[0].text,
+                    'did_not_play': row.select(self.DID_NOT_PLAY_FIELD)[0].text
+                })
 
     def handle_data(self):
         handler = BeautifulSoup(self.html, self.parser)
@@ -160,14 +167,26 @@ class BoxscorePageParser(BasePageParser):
         home_team = self.get_abbreviation_from_url(home_team_field.get('href'))
         away_team = self.get_abbreviation_from_url(away_team_field.get('href'))
 
-        self.process_basic_box_table(handler, home_team.lower(), 
-            self.data['home_team']['basic'])
-        self.process_basic_box_table(handler, away_team.lower(), 
-            self.data['away_team']['basic'])
-        self.process_advanced_box_table(handler, home_team.lower(),
-            self.data['home_team']['advanced'])
-        self.process_advanced_box_table(handler, away_team.lower(),
-            self.data['away_team']['advanced'])
+        self.process_basic_box_table(
+            handler, 
+            home_team.lower(), 
+            self.data['home_team']['basic']
+        )
+        self.process_basic_box_table(
+            handler, 
+            away_team.lower(), 
+            self.data['away_team']['basic']
+        )
+        self.process_advanced_box_table(
+            handler, 
+            home_team.lower(),
+            self.data['home_team']['advanced']
+        )
+        self.process_advanced_box_table(
+            handler, 
+            away_team.lower(),
+            self.data['away_team']['advanced']
+        )
 
     def get_data(self):
         if (len(self.data['home_team']['basic']) == 0 
