@@ -34,6 +34,9 @@ class SeasonSchedulePageParser:
     DATETIME_PM      = 'PM'
 
     EMPTY_STR_AS_INT = -1
+    REGULAR_GAME     = 'regular'
+    SCHEDULED_GAME   = 'scheduled'
+    PLAYOFFS_GAME    = 'playoffs'
 
     def __init__(self, html, parser='html.parser'):
         self.data = []
@@ -72,7 +75,11 @@ class SeasonSchedulePageParser:
     def handle_data(self):
         handler = BeautifulSoup(self.html, self.parser)
         season_schedule_rows = handler.select(self.SEASON_SCHEDULE_TR)
+        game_type = self.REGULAR_GAME
         for row in season_schedule_rows:
+            if row.get('class') is not None and 'thead' in row.get('class'):
+                game_type = self.PLAYOFFS_GAME
+                continue
             self.data.append({
                 'game_date': self.game_date_text_to_date(
                     row.select(self.DATE_FIELD)[0].text),
@@ -91,7 +98,8 @@ class SeasonSchedulePageParser:
                 'overtimes': row.select(self.OVERTIMES_FIELD)[0]\
                     .text.lower(),
                 'attendance': self.text_to_int(
-                    row.select(self.ATTENDANCE_FIELD)[0].text)
+                    row.select(self.ATTENDANCE_FIELD)[0].text),
+                'type': game_type
             })
 
     def get_data(self):
