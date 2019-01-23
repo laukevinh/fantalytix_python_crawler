@@ -55,7 +55,8 @@ class TestSeasonSchedulePageParser(unittest.TestCase):
                 'box_score_text': ('https://www.basketball-reference.com/'
                                    'boxscores/201810160BOS.html'),
                 'overtimes': '',
-                'attendance': 18624
+                'attendance': 18624,
+                'type': parser.REGULAR_GAME
             },
         ]
 

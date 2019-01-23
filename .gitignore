@@ -6,3 +6,6 @@ __pycache__/
 
 # swp
 *.swp
+
+venv/
+*.egg-info
