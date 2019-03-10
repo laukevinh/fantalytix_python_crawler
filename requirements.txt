@@ -1,2 +1,2 @@
 beautifulsoup4==4.6.3
-FantalytixPythonCrawler==1.0
+git+https://github.com/laukevinh/fantalytix_python_crawler.git
